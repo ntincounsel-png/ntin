@@ -731,8 +731,30 @@
         }
 
         function renderItemsTable(data) {
-            const tbody = document.getElementById('itemsTableBody');
-            tbody.innerHTML = '';
+    const tbody = document.getElementById('itemsTableBody');
+    tbody.innerHTML = '';
+
+    if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#888;">找不到符合條件的館藏</td></tr>';
+        return;
+    }
+
+    data.forEach(item => {
+        const badgeClass = item.status === '可借閱' ? 'badge-available' : 'badge-borrowed';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${item.id}</strong></td>
+            <td><span class="badge badge-type">${item.itemType}</span></td>
+            <td>${item.title}</td>
+            <td>${item.author}</td>
+            <td><span class="badge ${badgeClass}">${item.status}</span></td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="handleDeleteItem('${item.id}', '${item.title}')">刪除</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
             if (data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">找不到符合條件的館藏</td></tr>';
