@@ -753,11 +753,67 @@
         }
 
         async function handleReturn() {
-            const url = getApiUrl();
-            if (!url) return showToast('請先設定 API 網址', true);
+            // 辦理借出（強制檢查：館藏編號 + 讀者編號）
+async function handleBorrow() {
+    const url = getApiUrl();
+    if (!url) return showToast('請先設定 API 網址', true);
 
-            const item_id = document.getElementById('actionItemId').value.trim();
-            if (!item_id) return showToast('請輸入館藏編號', true);
+    const item_id = document.getElementById('actionItemId').value.trim();
+    const user_id = document.getElementById('actionUserId').value.trim();
+    
+    // 💡 強制驗證：兩者均為必填
+    if (!item_id) {
+        return showToast('❌ 請輸入或掃描館藏編號！', true);
+    }
+    if (!user_id) {
+        return showToast('❌ 辦理借出必須輸入讀者編號！', true);
+    }
+
+    showToast('辦理借出中...');
+    try {
+        const res = await fetch(url, { 
+            method: 'POST', 
+            body: JSON.stringify({ action: 'borrowItem', item_id, user_id }) 
+        });
+        const data = await res.json();
+        showToast(data.message, data.status !== 'success');
+        if (data.status === 'success') { 
+            // 成功後清空輸入框
+            document.getElementById('actionItemId').value = '';
+            document.getElementById('actionUserId').value = '';
+            loadItems(true); 
+            loadUsers(true);
+        }
+    } catch (e) { 
+        showToast('借出失敗，請確認網路連線', true); 
+    }
+}
+
+// 辦理歸還（僅檢查：館藏編號）
+async function handleReturn() {
+    const url = getApiUrl();
+    if (!url) return showToast('請先設定 API 網址', true);
+
+    const item_id = document.getElementById('actionItemId').value.trim();
+    if (!item_id) return showToast('❌ 請輸入或掃描館藏編號！', true);
+
+    showToast('辦理歸還中...');
+    try {
+        const res = await fetch(url, { 
+            method: 'POST', 
+            body: JSON.stringify({ action: 'returnItem', item_id }) 
+        });
+        const data = await res.json();
+        showToast(data.message, data.status !== 'success');
+        if (data.status === 'success') { 
+            document.getElementById('actionItemId').value = '';
+            loadItems(true); 
+            loadUsers(true);
+        }
+    } catch (e) { 
+        showToast('歸還失敗，請確認網路連線', true); 
+    }
+}
 
             showToast('辦理歸還中...');
             try {
