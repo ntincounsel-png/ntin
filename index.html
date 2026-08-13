@@ -30,7 +30,7 @@
             line-height: 1.6;
         }
 
-        /* 放大尺寸的頂部標題區 */
+        /* 頂部標題區 */
         header {
             background-color: var(--primary-color);
             color: white;
@@ -314,7 +314,7 @@
                     <div class="card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <h3 style="border: none; margin: 0; padding: 0;">館藏快速查詢與選擇</h3>
-                            <button class="btn btn-secondary btn-sm" onclick="loadItems(true)">重新整理</button>
+                            <button class="btn btn-secondary btn-sm" onclick="loadItems()">重新整理</button>
                         </div>
 
                         <!-- 分類篩選與書名關鍵字搜尋 Bar -->
@@ -392,7 +392,7 @@
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <h3 style="border: none; margin: 0; padding: 0;">完整館藏維護清單</h3>
-                    <button class="btn btn-secondary btn-sm" onclick="loadItems(true)">重新整理</button>
+                    <button class="btn btn-secondary btn-sm" onclick="loadItems()">重新整理</button>
                 </div>
                 <table>
                     <thead>
@@ -436,7 +436,7 @@
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <h3 style="border: none; margin: 0; padding: 0;">借閱人員資料與統計清單</h3>
-                    <button class="btn btn-secondary btn-sm" onclick="loadUsers(true)">重新整理</button>
+                    <button class="btn btn-secondary btn-sm" onclick="loadUsers()">重新整理</button>
                 </div>
                 <table>
                     <thead>
@@ -480,7 +480,7 @@
             if (!url) return showToast('請輸入有效的 API 網址', true);
             localStorage.setItem('apiUrl', url);
             showToast('API 網址已設定完畢');
-            loadItems(true);
+            loadItems();
         }
 
         function getToken() {
@@ -569,13 +569,14 @@
             return true;
         }
 
-        // 載入館藏資料
-        async function loadItems(force = false) {
+        // 載入館藏資料（套用方案一：強效防快取）
+        async function loadItems() {
             const url = getApiUrl();
             if (!url) return;
 
             try {
-                const res = await fetch(`${url}?type=items${force ? '&t=' + Date.now() : ''}`);
+                // 💡 加入 &_nc=${Date.now()} 時間戳記，強迫瀏覽器每次都索取最新試算表資料
+                const res = await fetch(`${url}?type=items&_nc=${Date.now()}`);
                 const data = await res.json();
                 rawItemsData = data;
                 renderQuickItemsTable(); // 渲染第一頁清單
@@ -666,13 +667,14 @@
             });
         }
 
-        // 第三頁讀者清單渲染
-        async function loadUsers(force = false) {
+        // 第三頁讀者清單渲染（套用方案一：強效防快取）
+        async function loadUsers() {
             const url = getApiUrl();
             if (!url) return;
 
             try {
-                const res = await fetch(`${url}?type=users${force ? '&t=' + Date.now() : ''}`);
+                // 💡 加入 &_nc=${Date.now()} 時間戳記，避免載入舊的讀者狀態
+                const res = await fetch(`${url}?type=users&_nc=${Date.now()}`);
                 const data = await res.json();
                 renderUsersTable(data);
             } catch (e) {
@@ -715,7 +717,7 @@
                 document.getElementById('newItemId').value = '';
                 document.getElementById('newItemTitle').value = '';
                 document.getElementById('newItemAuthor').value = '';
-                loadItems(true);
+                loadItems();
             });
         }
 
@@ -725,7 +727,7 @@
             }
 
             await sendPostAction({ action: 'deleteItem', id: itemId }, () => {
-                loadItems(true);
+                loadItems();
             });
         }
 
@@ -740,7 +742,7 @@
                 document.getElementById('newUserId').value = '';
                 document.getElementById('newUserName').value = '';
                 document.getElementById('newUserEmail').value = '';
-                loadUsers(true);
+                loadUsers();
             });
         }
 
@@ -752,7 +754,7 @@
 
             await sendPostAction({ action: 'borrowItem', item_id, user_id }, () => {
                 document.getElementById('actionItemId').value = '';
-                loadItems(true);
+                loadItems();
             });
         }
 
@@ -763,7 +765,7 @@
 
             await sendPostAction({ action: 'returnItem', item_id }, () => {
                 document.getElementById('actionItemId').value = '';
-                loadItems(true);
+                loadItems();
             });
         }
 
