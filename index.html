@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>國立臺南護理專科學校學輔中心 圖書與館藏借閱管理系統</title>
+    <title>國立台南護理專科學校學輔中心 圖書與館藏借閱管理系統</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -37,11 +37,30 @@
             border-radius: 8px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
-        header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+        .header-logo {
+            height: 55px;
+            width: auto;
+            background: #ffffff;
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .header-title-group h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .header-title-group .sub-title {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            margin-top: 4px;
         }
 
         .api-config {
@@ -51,6 +70,8 @@
             background: rgba(255,255,255,0.1);
             padding: 10px;
             border-radius: 6px;
+            width: 100%;
+            margin-top: 10px;
         }
 
         .api-config input {
@@ -140,7 +161,6 @@
             font-size: 1rem;
         }
 
-        /* 🔍 新增：分類搜尋列樣式 */
         .search-bar {
             display: flex;
             gap: 10px;
@@ -273,14 +293,17 @@
 <body>
 
     <header>
-       <header style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-    <!-- 直接引用剛剛上傳的 logo.png -->
-    <img src="logo.png" alt="學校Logo" style="height: 55px; width: auto; background: #ffffff; padding: 5px; border-radius: 8px;">
-    <div>
-        <h1 style="margin: 0; font-size: 1.5rem; color: #ffffff;">國立臺南護理專科學校學輔中心</h1>
-        <div style="font-size: 1.1rem; color: #e0e0e0; margin-top: 4px;">圖書與館藏借閱管理系統</div>
-    </div>
-</header>
+        <!-- 若上傳 logo.png 至 GitHub，即可直接顯示 -->
+        <img src="logo.png" alt="學校Logo" class="header-logo" onerror="this.style.display='none'">
+        <div class="header-title-group">
+            <h1>國立台南護理專科學校學輔中心</h1>
+            <div class="sub-title">圖書與館藏借閱管理系統</div>
+        </div>
+        <div class="api-config">
+            <label for="apiUrlInput">API 網址：</label>
+            <input type="text" id="apiUrlInput" placeholder="請貼上 Google Apps Script 網頁應用程式網址">
+            <button class="btn" style="width: auto; padding: 8px 16px;" onclick="saveApiUrl()">儲存</button>
+        </div>
     </header>
 
     <div class="nav-tabs">
@@ -316,7 +339,6 @@
                         <button class="btn-refresh" onclick="loadItems(true)">🔄 強制刷新</button>
                     </div>
 
-                    <!-- 🔍 借還書頁面的即時搜尋 -->
                     <div class="search-bar">
                         <select id="quickFilterType" onchange="filterQuickItems()">
                             <option value="">全部類型</option>
@@ -385,7 +407,6 @@
                         <button class="btn-refresh" onclick="loadItems(true)">🔄 強制刷新</button>
                     </div>
 
-                    <!-- 🔍 主館藏管理頁面的多功能分類搜尋 bar -->
                     <div class="search-bar">
                         <select id="filterType" onchange="filterItems()">
                             <option value="">全部類型</option>
@@ -515,7 +536,6 @@
             setTimeout(() => toast.style.display = 'none', 3000);
         }
 
-        // 載入館藏
         async function loadItems(forceRefresh = false) {
             if (cachedItems && !forceRefresh) {
                 filterItems();
@@ -536,7 +556,6 @@
             }
         }
 
-        // 🔍 主館藏頁面過濾器
         function filterItems() {
             if (!cachedItems) return;
             const typeFilter = document.getElementById('filterType').value;
@@ -556,7 +575,6 @@
             renderItemsTable(filtered);
         }
 
-        // 🔍 借還書快速對照過濾器
         function filterQuickItems() {
             if (!cachedItems) return;
             const typeFilter = document.getElementById('quickFilterType').value;
@@ -573,7 +591,6 @@
             renderQuickItemsTable(filtered);
         }
 
-        // 渲染主館藏表格
         function renderItemsTable(data) {
             const tbody = document.getElementById('itemsTableBody');
             tbody.innerHTML = '';
@@ -597,7 +614,6 @@
             });
         }
 
-        // 渲染借還書對照表格
         function renderQuickItemsTable(data) {
             const quickBody = document.getElementById('quickItemsBody');
             quickBody.innerHTML = '';
@@ -625,7 +641,6 @@
             });
         }
 
-        // 載入讀者
         async function loadUsers(forceRefresh = false) {
             if (cachedUsers && !forceRefresh) {
                 renderUsersTable(cachedUsers);
@@ -672,7 +687,6 @@
             });
         }
 
-        // 表單提交事件處理
         document.getElementById('addItemForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const url = getApiUrl();
