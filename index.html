@@ -3,240 +3,533 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>國立臺南護理專科學校學生輔導中心 圖書管理系統</title>
+    <title>國立臺南護理專科學校學生輔導中心 圖書及館藏借閱系統</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        :root {
+            --primary-color: #2b579a;
+            --primary-hover: #1e3d6b;
+            --accent-color: #00a896;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #6c757d;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 15px rgba(0,0,0,0.1);
+            --radius-main: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f9;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        h1, h2, h3 {
-            color: #333;
-        }
-        .header-bar {
+
+        /* 頂部導覽列 (第二版風格) */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), #1a365d);
+            color: white;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #003366;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .header-bar h1 {
-            color: white;
-            margin: 0;
-            font-size: 24px;
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
-        .section {
-            background-color: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+        .navbar-brand i {
+            font-size: 1.5rem;
+            color: #64ffda;
         }
-        .form-group {
-            margin-bottom: 15px;
+
+        .user-panel {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
         }
-        label {
-            display: inline-block;
-            width: 120px;
-            font-weight: bold;
+
+        .user-status {
+            font-size: 0.9rem;
         }
-        input, select {
-            padding: 8px;
-            width: 250px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+
+        /* 主要佈局 */
+        .main-layout {
+            display: flex;
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+            gap: 25px;
+            flex: 1;
+            width: 100%;
         }
-        button {
-            padding: 8px 15px;
-            background-color: #003366;
-            color: white;
+
+        /* 側邊導覽 */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu {
+            background: var(--card-bg);
+            border-radius: var(--radius-main);
+            padding: 15px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: sticky;
+            top: 90px;
+        }
+
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px 18px;
             border: none;
-            border-radius: 4px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 8px;
             cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
         }
-        button:hover {
-            background-color: #002244;
+
+        .menu-btn:hover {
+            background-color: #f0f4f8;
+            color: var(--primary-color);
         }
-        .btn-danger {
-            background-color: #d9534f;
+
+        .menu-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(43, 87, 154, 0.3);
         }
-        .btn-danger:hover {
-            background-color: #c9302c;
+
+        /* 內容主要區域 */
+        .content-area {
+            flex: 1;
         }
-        .btn-secondary {
-            background-color: #6c757d;
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
         }
-        .btn-secondary:hover {
-            background-color: #5a6268;
+
+        .tab-content.active {
+            display: block;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 卡片設計 (第二版排版) */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-main);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+            transition: box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f4f8;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 表單元素 */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #4a5568;
+        }
+
+        .form-control {
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(43, 87, 154, 0.15);
+        }
+
+        /* 按鈕視覺 */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+
+        .btn-danger { background-color: #e53e3e; color: white; }
+        .btn-danger:hover { background-color: #c53030; }
+
+        .btn-secondary { background-color: #e2e8f0; color: #4a5568; }
+        .btn-secondary:hover { background-color: #cbd5e0; }
+
+        .btn-accent { background-color: var(--accent-color); color: white; }
+        .btn-accent:hover { background-color: #008f80; }
+
+        .btn-sm { padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; }
+
+        /* API URL 設定 Bar */
+        .api-config-card {
+            background: linear-gradient(to right, #ebf8ff, #e6fffa);
+            border: 1px solid #bee3f8;
+            padding: 16px 20px;
+            border-radius: var(--radius-main);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* 表格優化 */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            font-size: 0.95rem;
         }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
+
         th {
-            background-color: #003366;
-            color: white;
+            background-color: #f7fafc;
+            color: #4a5568;
+            font-weight: 700;
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 2px solid var(--border-color);
         }
-        .status-available {
-            color: green;
-            font-weight: bold;
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
         }
-        .status-borrowed {
-            color: red;
-            font-weight: bold;
+
+        tr:hover {
+            background-color: #f8fafc;
         }
+
+        /* 狀態 Badge */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-available { background-color: #c6f6d5; color: #22543d; }
+        .badge-borrowed { background-color: #fed7d7; color: #742a2a; }
+        .badge-type { background-color: #e2e8f0; color: #2d3748; }
+
+        /* Toast 通知 */
         #toast {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #333;
+            bottom: 30px;
+            right: 30px;
+            padding: 14px 24px;
+            border-radius: 8px;
+            background-color: #2d3748;
             color: white;
-            padding: 15px 25px;
-            border-radius: 5px;
             display: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow-md);
             z-index: 1000;
+            font-size: 0.95rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- 頂部標題列 -->
-    <div class="header-bar">
-        <h1>📚國立臺南護理專科學校學生輔導中心 圖書管理系統</h1>
-        <div>
-            <span id="adminDisplayName" style="margin-right: 15px;">當前狀態：訪客</span>
-            <button id="loginBtn" onclick="showLoginPrompt()">管理者登入</button>
-            <button id="logoutBtn" onclick="handleLogout()" class="btn-secondary" style="display: none;">登出</button>
+    <!-- 頂部頁首 (Navbar) -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>國立臺南護理專科學校學生輔導中心 圖書及館藏借閱系統</span>
         </div>
+        <div class="user-panel">
+            <span class="user-status" id="adminDisplayName"><i class="fa-regular fa-user"></i> 訪客模式</span>
+            <button id="loginBtn" class="btn btn-accent btn-sm" onclick="showLoginPrompt()">管理者登入</button>
+            <button id="logoutBtn" class="btn btn-secondary btn-sm" onclick="handleLogout()" style="display: none;">登出</button>
+        </div>
+    </nav>
+
+    <!-- 主要內容區 (Sidebar + Main Content) -->
+    <div class="main-layout">
+        
+        <!-- 左側選單 -->
+        <aside class="sidebar">
+            <div class="sidebar-menu">
+                <button class="menu-btn active" onclick="switchTab(event, 'tab-items')">
+                    <i class="fa-solid fa-boxes-stacked"></i> 館藏查詢與管理
+                </button>
+                <button class="menu-btn" onclick="switchTab(event, 'tab-borrow')">
+                    <i class="fa-solid fa-right-left"></i> 借還書櫃臺
+                </button>
+                <button class="menu-btn" onclick="switchTab(event, 'tab-users')">
+                    <i class="fa-solid fa-users"></i> 讀者資料管理
+                </button>
+            </div>
+        </aside>
+
+        <!-- 右側主要區塊 -->
+        <main class="content-area">
+
+            <!-- API 連線設定 -->
+            <div class="api-config-card">
+                <i class="fa-solid fa-link" style="color: var(--primary-color);"></i>
+                <label for="apiUrlInput" style="font-weight: bold; white-space: nowrap;">Apps Script API 網址：</label>
+                <input type="text" id="apiUrlInput" class="form-control" style="flex: 1;" placeholder="請貼上您的 Google Apps Script 網頁應用程式網址">
+                <button class="btn btn-secondary btn-sm" onclick="saveApiUrl()">儲存設定</button>
+            </div>
+
+            <!-- Tab 1: 館藏查詢與管理 -->
+            <div id="tab-items" class="tab-content active">
+                
+                <!-- 新增館藏 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-circle-plus"></i> 新增館藏資料
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>館藏編號</label>
+                            <input type="text" id="newItemId" class="form-control" placeholder="例如：B001">
+                        </div>
+                        <div class="form-group">
+                            <label>名稱 / 書名</label>
+                            <input type="text" id="newItemTitle" class="form-control" placeholder="例如：情緒勒索">
+                        </div>
+                        <div class="form-group">
+                            <label>類型</label>
+                            <select id="newItemType" class="form-control">
+                                <option value="書籍">書籍</option>
+                                <option value="牌卡桌游">牌卡桌游</option>
+                                <option value="DVD">DVD</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>作者 / 發行單位</label>
+                            <input type="text" id="newItemAuthor" class="form-control" placeholder="例如：周慕姿">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="handleAddItem()">
+                        <i class="fa-solid fa-plus"></i> 新增至系統
+                    </button>
+                </div>
+
+                <!-- 館藏列表 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-list-check"></i> 館藏清單
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="loadItems(true)">
+                            <i class="fa-solid fa-rotate"></i> 重新整理
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>編號</th>
+                                    <th>類型</th>
+                                    <th>名稱</th>
+                                    <th>作者/發行</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsTableBody">
+                                <tr><td colspan="6" style="text-align:center;">載入中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: 借還書櫃臺 -->
+            <div id="tab-borrow" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-hand-holding"></i> 辦理借書 / 歸還
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>館藏編號</label>
+                            <input type="text" id="actionItemId" class="form-control" placeholder="請輸入或掃描館藏編號">
+                        </div>
+                        <div class="form-group">
+                            <label>讀者編號 (辦理借書時必填)</label>
+                            <input type="text" id="actionUserId" class="form-control" placeholder="例如：S112001">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 10px;">
+                        <button class="btn btn-primary" onclick="handleBorrowItem()">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> 辦理借出
+                        </button>
+                        <button class="btn btn-accent" onclick="handleReturnItem()">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i> 辦理歸還
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: 讀者資料管理 -->
+            <div id="tab-users" class="tab-content">
+                
+                <!-- 新增讀者 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-user-plus"></i> 新增讀者資料
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>讀者編號/學號</label>
+                            <input type="text" id="newUserId" class="form-control" placeholder="例如：S112001">
+                        </div>
+                        <div class="form-group">
+                            <label>姓名</label>
+                            <input type="text" id="newUserName" class="form-control" placeholder="例如：王小明">
+                        </div>
+                        <div class="form-group">
+                            <label>電子郵件</label>
+                            <input type="email" id="newUserEmail" class="form-control" placeholder="例如：user@example.com">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="handleAddUser()">
+                        <i class="fa-solid fa-check"></i> 建立讀者
+                    </button>
+                </div>
+
+                <!-- 讀者列表 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-users-gear"></i> 讀者與借閱統計清單
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="loadUsers(true)">
+                            <i class="fa-solid fa-rotate"></i> 重新整理
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>讀者編號</th>
+                                    <th>姓名</th>
+                                    <th>Email</th>
+                                    <th>目前借閱數</th>
+                                    <th>累計借閱數</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="5" style="text-align:center;">載入中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
-    <!-- API 設定區 -->
-    <div class="section">
-        <h3>⚙️ API 連線設定</h3>
-        <div class="form-group">
-            <label>API 網址：</label>
-            <input type="text" id="apiUrlInput" style="width: 450px;" placeholder="請貼上您的 Google Apps Script 網頁應用程式網址">
-            <button onclick="saveApiUrl()">儲存設定</button>
-        </div>
-    </div>
-
-    <!-- 館藏管理區 -->
-    <div class="section">
-        <h2>📚 館藏管理</h2>
-        <h3>➕ 新增館藏</h3>
-        <div class="form-group">
-            <label>館藏編號：</label>
-            <input type="text" id="newItemId" placeholder="例如：B001">
-        </div>
-        <div class="form-group">
-            <label>名稱 / 書名：</label>
-            <input type="text" id="newItemTitle" placeholder="例如：情緒勒索">
-        </div>
-        <div class="form-group">
-            <label>類型：</label>
-            <select id="newItemType">
-                <option value="書籍">書籍</option>
-                <option value="牌卡桌遊">牌卡桌遊</option>
-                <option value="DVD">DVD</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>作者 / 發行：</label>
-            <input type="text" id="newItemAuthor" placeholder="例如：周慕姿">
-        </div>
-        <button onclick="handleAddItem()">新增館藏</button>
-
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-
-        <h3>📋 館藏清單</h3>
-        <button onclick="loadItems(true)" class="btn-secondary">重新整理列表</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>編號</th>
-                    <th>類型</th>
-                    <th>名稱</th>
-                    <th>作者/發行</th>
-                    <th>狀態</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="itemsTableBody">
-                <tr><td colspan="6" style="text-align:center;">載入中...</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- 借還書櫃臺 -->
-    <div class="section">
-        <h2>🔄 借還書櫃臺</h2>
-        <div class="form-group">
-            <label>館藏編號：</label>
-            <input type="text" id="actionItemId" placeholder="請輸入館藏編號">
-        </div>
-        <div class="form-group">
-            <label>讀者編號：</label>
-            <input type="text" id="actionUserId" placeholder="借書時必填 (例如：S123456789)">
-        </div>
-        <button onclick="handleBorrowItem()">辦理借出</button>
-        <button onclick="handleReturnItem()" class="btn-secondary">辦理歸還</button>
-    </div>
-
-    <!-- 讀者資料管理 -->
-    <div class="section">
-        <h2>👤 讀者資料管理</h2>
-        <h3>➕ 新增讀者</h3>
-        <div class="form-group">
-            <label>讀者編號/學號：</label>
-            <input type="text" id="newUserId" placeholder="例如：s123456789">
-        </div>
-        <div class="form-group">
-            <label>姓名：</label>
-            <input type="text" id="newUserName" placeholder="例如：李小華">
-        </div>
-        <div class="form-group">
-            <label>電子郵件：</label>
-            <input type="email" id="newUserEmail" placeholder="例如：user@example.com">
-        </div>
-        <button onclick="handleAddUser()">建立讀者</button>
-
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-
-        <h3>👥 讀者與借閱統計清單</h3>
-        <button onclick="loadUsers(true)" class="btn-secondary">重新整理列表</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>讀者編號</th>
-                    <th>姓名</th>
-                    <th>Email</th>
-                    <th>目前借閱數</th>
-                    <th>累計借閱數</th>
-                </tr>
-            </thead>
-            <tbody id="usersTableBody">
-                <tr><td colspan="5" style="text-align:center;">載入中...</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- 提示訊息 -->
+    <!-- Toast 彈出式訊息 -->
     <div id="toast"></div>
 
     <script>
-        // ==================== 全域與初始化 ====================
+        // 全域初始化
         document.addEventListener("DOMContentLoaded", () => {
             const savedUrl = localStorage.getItem('apiUrl');
             if (savedUrl) {
@@ -244,7 +537,6 @@
             }
             checkLoginStatus();
             loadItems();
-            loadUsers();
         });
 
         function getApiUrl() {
@@ -257,7 +549,6 @@
             localStorage.setItem('apiUrl', url);
             showToast('API 網址儲存成功！');
             loadItems(true);
-            loadUsers(true);
         }
 
         function getToken() {
@@ -267,22 +558,36 @@
         function showToast(msg, isError = false) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
-            toast.style.backgroundColor = isError ? '#d9534f' : '#333';
+            toast.style.backgroundColor = isError ? '#e53e3e' : '#2d3748';
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
-        // ==================== 身份驗證 ====================
+        // 頁籤切換邏輯
+        function switchTab(event, tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+
+            if (tabId === 'tab-items') loadItems();
+            if (tabId === 'tab-users') loadUsers();
+        }
+
+        // 身份與權限驗證
         function checkLoginStatus() {
             const token = getToken();
             const adminName = localStorage.getItem('adminName');
 
             if (token && adminName) {
-                document.getElementById('adminDisplayName').innerText = `👤 管理員：${adminName}`;
+                document.getElementById('adminDisplayName').innerHTML = `<i class="fa-solid fa-user-shield"></i> 管理員：${adminName}`;
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
             } else {
-                document.getElementById('adminDisplayName').innerText = '當前狀態：訪客';
+                document.getElementById('adminDisplayName').innerHTML = `<i class="fa-regular fa-user"></i> 訪客模式`;
                 document.getElementById('loginBtn').style.display = 'inline-block';
                 document.getElementById('logoutBtn').style.display = 'none';
             }
@@ -314,7 +619,7 @@
                     showToast(data.message, true);
                 }
             } catch (e) {
-                showToast('登入失敗，請檢查 API 網址或網路連線', true);
+                showToast('登入失敗，請檢查 API 網址', true);
             }
         }
 
@@ -334,7 +639,7 @@
             return true;
         }
 
-        // ==================== 載入與渲染資料 ====================
+        // 載入與繪製館藏
         async function loadItems(force = false) {
             const url = getApiUrl();
             if (!url) return;
@@ -353,27 +658,30 @@
             tbody.innerHTML = '';
 
             if (!Array.isArray(data) || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">尚無館藏資料</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#888;">尚無館藏資料</td></tr>';
                 return;
             }
 
             data.forEach(item => {
-                const statusClass = item.status === '可借閱' ? 'status-available' : 'status-borrowed';
+                const badgeClass = item.status === '可借閱' ? 'badge-available' : 'badge-borrowed';
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>${item.id}</strong></td>
-                    <td>${item.itemType}</td>
+                    <td><span class="badge badge-type">${item.itemType}</span></td>
                     <td>${item.title}</td>
                     <td>${item.author}</td>
-                    <td><span class="${statusClass}">${item.status}</span></td>
+                    <td><span class="badge ${badgeClass}">${item.status}</span></td>
                     <td>
-                        <button class="btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="handleDeleteItem('${item.id}', '${item.title}')">刪除</button>
+                        <button class="btn btn-danger btn-sm" onclick="handleDeleteItem('${item.id}', '${item.title}')">
+                            <i class="fa-solid fa-trash"></i> 刪除
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
+        // 載入與繪製讀者
         async function loadUsers(force = false) {
             const url = getApiUrl();
             if (!url) return;
@@ -392,7 +700,7 @@
             tbody.innerHTML = '';
 
             if (!Array.isArray(data) || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">尚無讀者資料</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">尚無讀者資料</td></tr>';
                 return;
             }
 
@@ -409,9 +717,7 @@
             });
         }
 
-        // ==================== 後端操作 API Functions ====================
-        
-        // 1. 新增館藏
+        // POST 動作操作 (新增/刪除/借歸還)
         async function handleAddItem() {
             const id = document.getElementById('newItemId').value.trim();
             const title = document.getElementById('newItemTitle').value.trim();
@@ -428,9 +734,8 @@
             });
         }
 
-        // 2. 刪除館藏
         async function handleDeleteItem(itemId, itemTitle) {
-            if (!confirm(`⚠️ 確定要刪除館藏：【${itemTitle}】(編號: ${itemId}) 嗎？\n此動作將直接從平臺資料庫移除！`)) {
+            if (!confirm(`⚠️ 確定要刪除館藏：【${itemTitle}】(編號: ${itemId}) 嗎？`)) {
                 return;
             }
 
@@ -439,7 +744,6 @@
             });
         }
 
-        // 3. 新增讀者
         async function handleAddUser() {
             const user_id = document.getElementById('newUserId').value.trim();
             const name = document.getElementById('newUserName').value.trim();
@@ -455,7 +759,6 @@
             });
         }
 
-        // 4. 辦理借書
         async function handleBorrowItem() {
             const item_id = document.getElementById('actionItemId').value.trim();
             const user_id = document.getElementById('actionUserId').value.trim();
@@ -468,7 +771,6 @@
             });
         }
 
-        // 5. 辦理歸還
         async function handleReturnItem() {
             const item_id = document.getElementById('actionItemId').value.trim();
 
@@ -480,7 +782,6 @@
             });
         }
 
-        // 通用 POST 送出函式
         async function sendPostAction(payload, onSuccess) {
             const url = getApiUrl();
             const token = getToken();
@@ -501,7 +802,7 @@
                     onSuccess();
                 }
             } catch (e) {
-                showToast('操作失敗，請檢查網路連線', true);
+                showToast('操作失敗，請檢查網路狀態', true);
             }
         }
     </script>
