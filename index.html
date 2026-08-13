@@ -5,634 +5,505 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>國立臺南護理專科學校學生輔導中心 圖書管理系統</title>
     <style>
-        :root {
-            --primary-color: #0056b3;
-            --primary-hover: #004085;
-            --danger-color: #dc3545;
-            --danger-hover: #bd2130;
-            --success-color: #28a745;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --border-color: #dee2e6;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        h1, h2, h3 {
             color: #333;
         }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        header {
+        .header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--card-bg);
-            padding: 20px 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* 頁籤樣式 */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 5px;
-            color: #6c757d;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-
-        .tab-btn.active {
-            background-color: var(--primary-color);
+            background-color: #003366;
             color: white;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* 卡片與表單 */
-        .card {
-            background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 15px 20px;
+            border-radius: 5px;
             margin-bottom: 20px;
         }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+        .header-bar h1 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+        }
+        .section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
             margin-bottom: 15px;
         }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
         label {
+            display: inline-block;
+            width: 120px;
             font-weight: bold;
-            font-size: 0.9rem;
-            color: #495057;
         }
-
         input, select {
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 0.95rem;
+            padding: 8px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
-
-        /* 按鈕樣式 */
-        .btn {
-            padding: 10px 18px;
+        button {
+            padding: 8px 15px;
+            background-color: #003366;
+            color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: bold;
-            transition: background 0.2s;
         }
-
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-primary:hover { background-color: var(--primary-hover); }
-
-        .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-danger:hover { background-color: var(--danger-hover); }
-
-        .btn-secondary { background-color: #6c757d; color: white; }
-        .btn-secondary:hover { background-color: #5a6268; }
-
-        .btn-sm { padding: 5px 10px; font-size: 0.85rem; }
-
-        /* 表格樣式 */
+        button:hover {
+            background-color: #002244;
+        }
+        .btn-danger {
+            background-color: #d9534f;
+        }
+        .btn-danger:hover {
+            background-color: #c9302c;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 15px;
         }
-
+        table, th, td {
+            border: 1px solid #ddd;
+        }
         th, td {
-            padding: 12px 15px;
+            padding: 10px;
             text-align: left;
-            border-bottom: 1px solid var(--border-color);
         }
-
         th {
-            background-color: #f1f3f5;
-            color: #495057;
+            background-color: #003366;
+            color: white;
         }
-
-        /* 標籤 */
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85rem;
+        .status-available {
+            color: green;
             font-weight: bold;
         }
-
-        .badge-available { background-color: #d4edda; color: #155724; }
-        .badge-borrowed { background-color: #f8d7da; color: #721c24; }
-        .badge-type { background-color: #e2e3e5; color: #383d41; }
-
-        /* API 設定與 Toast 提示 */
-        .config-bar {
-            background-color: #e9ecef;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .status-borrowed {
+            color: red;
+            font-weight: bold;
         }
-
         #toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            padding: 12px 20px;
-            border-radius: 5px;
             background-color: #333;
             color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
             display: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             z-index: 1000;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- 頂部標題與管理者狀態 -->
-    <header>
-        <h1>📚 國立臺南護理專科學校學生輔導中心 圖書管理系統</h1>
-        <div class="user-info">
-            <span id="adminDisplayName">當前狀態：訪客</span>
-            <button id="loginBtn" class="btn btn-primary btn-sm" onclick="showLoginPrompt()">管理者登入</button>
-            <button id="logoutBtn" class="btn btn-secondary btn-sm" onclick="handleLogout()" style="display: none;">登出</button>
-        </div>
-    </header>
-
-    <!-- API 網址設定區 -->
-    <div class="config-bar">
-        <label for="apiUrlInput"><strong>Apps Script API 網址：</strong></label>
-        <input type="text" id="apiUrlInput" style="flex: 1;" placeholder="請貼上您的 Google Apps Script 網頁應用程式網址">
-        <button class="btn btn-secondary btn-sm" onclick="saveApiUrl()">儲存設定</button>
-    </div>
-
-    <!-- 頁籤導覽 -->
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('tab-items')">館藏查詢與管理</button>
-        <button class="tab-btn" onclick="switchTab('tab-borrow')">借還書櫃臺</button>
-        <button class="tab-btn" onclick="switchTab('tab-users')">讀者資料管理</button>
-    </div>
-
-    <!-- 頁籤 1：館藏查詢與管理 -->
-    <div id="tab-items" class="tab-content active">
-        <!-- 新增館藏卡片 -->
-        <div class="card">
-            <h3>➕ 新增館藏資料</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>館藏編號</label>
-                    <input type="text" id="newItemId" placeholder="例如：B001">
-                </div>
-                <div class="form-group">
-                    <label>名稱 / 書名</label>
-                    <input type="text" id="newItemTitle" placeholder="例如：情緒勒索">
-                </div>
-                <div class="form-group">
-                    <label>類型</label>
-                    <select id="newItemType">
-                        <option value="書籍">書籍</option>
-                        <option value="牌卡桌遊">牌卡桌遊</option>
-                        <option value="DVD">DVD</option>
-                        <option value="其他">其他</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>作者 / 發行單位</label>
-                    <input type="text" id="newItemAuthor" placeholder="例如：周慕姿">
-                </div>
-            </div>
-            <button class="btn btn-primary" onclick="handleAddItem()">新增至系統</button>
-        </div>
-
-        <!-- 館藏列表 -->
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3>📋 館藏清單</h3>
-                <button class="btn btn-secondary btn-sm" onclick="loadItems(true)">重新整理清單</button>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>編號</th>
-                        <th>類型</th>
-                        <th>名稱</th>
-                        <th>作者/發行</th>
-                        <th>狀態</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="itemsTableBody">
-                    <tr><td colspan="6" style="text-align:center;">載入中...</td></tr>
-                </tbody>
-            </table>
+    <!-- 頂部標題列 -->
+    <div class="header-bar">
+        <h1>📚國立臺南護理專科學校學生輔導中心 圖書管理系統</h1>
+        <div>
+            <span id="adminDisplayName" style="margin-right: 15px;">當前狀態：訪客</span>
+            <button id="loginBtn" onclick="showLoginPrompt()">管理者登入</button>
+            <button id="logoutBtn" onclick="handleLogout()" class="btn-secondary" style="display: none;">登出</button>
         </div>
     </div>
 
-    <!-- 頁籤 2：借還書櫃臺 -->
-    <div id="tab-borrow" class="tab-content">
-        <div class="card">
-            <h3>🔄 辦理借書 / 歸還</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>館藏編號</label>
-                    <input type="text" id="actionItemId" placeholder="請輸入或掃描館藏編號">
-                </div>
-                <div class="form-group">
-                    <label>讀者編號 (辦理借書時必填)</label>
-                    <input type="text" id="actionUserId" placeholder="例如：S112001">
-                </div>
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button class="btn btn-primary" onclick="handleBorrowItem()">辦理借出</button>
-                <button class="btn btn-secondary" onclick="handleReturnItem()">辦理歸還</button>
-            </div>
+    <!-- API 設定區 -->
+    <div class="section">
+        <h3>⚙️ API 連線設定</h3>
+        <div class="form-group">
+            <label>API 網址：</label>
+            <input type="text" id="apiUrlInput" style="width: 450px;" placeholder="請貼上您的 Google Apps Script 網頁應用程式網址">
+            <button onclick="saveApiUrl()">儲存設定</button>
         </div>
     </div>
 
-    <!-- 頁籤 3：讀者資料管理 -->
-    <div id="tab-users" class="tab-content">
-        <!-- 新增讀者卡片 -->
-        <div class="card">
-            <h3>👤 新增讀者資料</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>讀者編號/學號</label>
-                    <input type="text" id="newUserId" placeholder="例如：s511201299">
-                </div>
-                <div class="form-group">
-                    <label>姓名</label>
-                    <input type="text" id="newUserName" placeholder="例如：李小華">
-                </div>
-                <div class="form-group">
-                    <label>電子郵件</label>
-                    <input type="email" id="newUserEmail" placeholder="例如：user@example.com">
-                </div>
-            </div>
-            <button class="btn btn-primary" onclick="handleAddUser()">建立讀者</button>
+    <!-- 館藏管理區 -->
+    <div class="section">
+        <h2>📚 館藏管理</h2>
+        <h3>➕ 新增館藏</h3>
+        <div class="form-group">
+            <label>館藏編號：</label>
+            <input type="text" id="newItemId" placeholder="例如：B001">
         </div>
+        <div class="form-group">
+            <label>名稱 / 書名：</label>
+            <input type="text" id="newItemTitle" placeholder="例如：情緒勒索">
+        </div>
+        <div class="form-group">
+            <label>類型：</label>
+            <select id="newItemType">
+                <option value="書籍">書籍</option>
+                <option value="牌卡桌遊">牌卡桌遊</option>
+                <option value="DVD">DVD</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>作者 / 發行：</label>
+            <input type="text" id="newItemAuthor" placeholder="例如：周慕姿">
+        </div>
+        <button onclick="handleAddItem()">新增館藏</button>
 
-        <!-- 讀者列表 -->
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3>👥 讀者與借閱統計清單</h3>
-                <button class="btn btn-secondary btn-sm" onclick="loadUsers(true)">重新整理</button>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>讀者編號</th>
-                        <th>姓名</th>
-                        <th>Email</th>
-                        <th>目前借閱數</th>
-                        <th>累計借閱數</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                    <tr><td colspan="5" style="text-align:center;">載入中...</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+        <h3>📋 館藏清單</h3>
+        <button onclick="loadItems(true)" class="btn-secondary">重新整理列表</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>編號</th>
+                    <th>類型</th>
+                    <th>名稱</th>
+                    <th>作者/發行</th>
+                    <th>狀態</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="itemsTableBody">
+                <tr><td colspan="6" style="text-align:center;">載入中...</td></tr>
+            </tbody>
+        </table>
     </div>
-</div>
 
-<!-- Toast 訊息通知 -->
-<div id="toast"></div>
+    <!-- 借還書櫃臺 -->
+    <div class="section">
+        <h2>🔄 借還書櫃臺</h2>
+        <div class="form-group">
+            <label>館藏編號：</label>
+            <input type="text" id="actionItemId" placeholder="請輸入館藏編號">
+        </div>
+        <div class="form-group">
+            <label>讀者編號：</label>
+            <input type="text" id="actionUserId" placeholder="借書時必填 (例如：S123456789)">
+        </div>
+        <button onclick="handleBorrowItem()">辦理借出</button>
+        <button onclick="handleReturnItem()" class="btn-secondary">辦理歸還</button>
+    </div>
 
-<script>
-    // ==================== 全域狀態與初始化 ====================
-    document.addEventListener("DOMContentLoaded", () => {
-        const savedUrl = localStorage.getItem('apiUrl');
-        if (savedUrl) {
-            document.getElementById('apiUrlInput').value = savedUrl;
-        }
-        checkLoginStatus();
-        loadItems();
-    });
+    <!-- 讀者資料管理 -->
+    <div class="section">
+        <h2>👤 讀者資料管理</h2>
+        <h3>➕ 新增讀者</h3>
+        <div class="form-group">
+            <label>讀者編號/學號：</label>
+            <input type="text" id="newUserId" placeholder="例如：s123456789">
+        </div>
+        <div class="form-group">
+            <label>姓名：</label>
+            <input type="text" id="newUserName" placeholder="例如：李小華">
+        </div>
+        <div class="form-group">
+            <label>電子郵件：</label>
+            <input type="email" id="newUserEmail" placeholder="例如：user@example.com">
+        </div>
+        <button onclick="handleAddUser()">建立讀者</button>
 
-    function getApiUrl() {
-        return localStorage.getItem('apiUrl') || '';
-    }
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
 
-    function saveApiUrl() {
-        const url = document.getElementById('apiUrlInput').value.trim();
-        if (!url) return showToast('請輸入有效的 API 網址', true);
-        localStorage.setItem('apiUrl', url);
-        showToast('API 網址儲存成功！');
-        loadItems(true);
-    }
+        <h3>👥 讀者與借閱統計清單</h3>
+        <button onclick="loadUsers(true)" class="btn-secondary">重新整理列表</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>讀者編號</th>
+                    <th>姓名</th>
+                    <th>Email</th>
+                    <th>目前借閱數</th>
+                    <th>累計借閱數</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                <tr><td colspan="5" style="text-align:center;">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-    function getToken() {
-        return localStorage.getItem('adminToken') || '';
-    }
+    <!-- 提示訊息 -->
+    <div id="toast"></div>
 
-    function showToast(msg, isError = false) {
-        const toast = document.getElementById('toast');
-        toast.innerText = msg;
-        toast.style.backgroundColor = isError ? '#dc3545' : '#333';
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3000);
-    }
-
-    // ==================== 頁籤切換 ====================
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-
-        document.getElementById(tabId).classList.add('active');
-        event.target.classList.add('active');
-
-        if (tabId === 'tab-items') loadItems();
-        if (tabId === 'tab-users') loadUsers();
-    }
-
-    // ==================== 身份驗證與登入 ====================
-    function checkLoginStatus() {
-        const token = getToken();
-        const adminName = localStorage.getItem('adminName');
-
-        if (token && adminName) {
-            document.getElementById('adminDisplayName').innerText = `👤 管理員：${adminName}`;
-            document.getElementById('loginBtn').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'inline-block';
-        } else {
-            document.getElementById('adminDisplayName').innerText = '當前狀態：訪客';
-            document.getElementById('loginBtn').style.display = 'inline-block';
-            document.getElementById('logoutBtn').style.display = 'none';
-        }
-    }
-
-    async function showLoginPrompt() {
-        const username = prompt("請輸入管理者帳號：");
-        if (!username) return;
-        const password = prompt("請輸入管理者密碼：");
-        if (!password) return;
-
-        const url = getApiUrl();
-        if (!url) return showToast('請先設定 API 網址', true);
-
-        showToast('驗證中...');
-        try {
-            const res = await fetch(url, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'login', username, password })
-            });
-            const data = await res.json();
-
-            if (data.status === 'success') {
-                localStorage.setItem('adminToken', data.token);
-                localStorage.setItem('adminName', data.adminName);
-                showToast('登入成功！');
-                checkLoginStatus();
-            } else {
-                showToast(data.message, true);
+    <script>
+        // ==================== 全域與初始化 ====================
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedUrl = localStorage.getItem('apiUrl');
+            if (savedUrl) {
+                document.getElementById('apiUrlInput').value = savedUrl;
             }
-        } catch (e) {
-            showToast('登入失敗，請檢查 API 網址或網路連線', true);
-        }
-    }
-
-    function handleLogout() {
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('adminName');
-        showToast('已安全登出！');
-        checkLoginStatus();
-    }
-
-    function handleApiResponse(data) {
-        if (data.status === 'unauthorized') {
-            handleLogout();
-            showToast(data.message, true);
-            return false;
-        }
-        return true;
-    }
-
-    // ==================== 讀取館藏與讀者 ====================
-    async function loadItems(force = false) {
-        const url = getApiUrl();
-        if (!url) return;
-
-        try {
-            const res = await fetch(`${url}?type=items${force ? '&t=' + Date.now() : ''}`);
-            const data = await res.json();
-            renderItemsTable(data);
-        } catch (e) {
-            console.error('載入館藏失敗:', e);
-        }
-    }
-
-    function renderItemsTable(data) {
-        const tbody = document.getElementById('itemsTableBody');
-        tbody.innerHTML = '';
-
-        if (!Array.isArray(data) || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#888;">找不到符合條件的館藏資料</td></tr>';
-            return;
-        }
-
-        data.forEach(item => {
-            const badgeClass = item.status === '可借閱' ? 'badge-available' : 'badge-borrowed';
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${item.id}</strong></td>
-                <td><span class="badge badge-type">${item.itemType}</span></td>
-                <td>${item.title}</td>
-                <td>${item.author}</td>
-                <td><span class="badge ${badgeClass}">${item.status}</span></td>
-                <td>
-                    <button class="btn btn-danger btn-sm" onclick="handleDeleteItem('${item.id}', '${item.title}')">刪除</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
+            checkLoginStatus();
+            loadItems();
+            loadUsers();
         });
-    }
 
-    async function loadUsers(force = false) {
-        const url = getApiUrl();
-        if (!url) return;
-
-        try {
-            const res = await fetch(`${url}?type=users${force ? '&t=' + Date.now() : ''}`);
-            const data = await res.json();
-            renderUsersTable(data);
-        } catch (e) {
-            console.error('載入讀者失敗:', e);
-        }
-    }
-
-    function renderUsersTable(data) {
-        const tbody = document.getElementById('usersTableBody');
-        tbody.innerHTML = '';
-
-        if (!Array.isArray(data) || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">尚無讀者資料</td></tr>';
-            return;
+        function getApiUrl() {
+            return localStorage.getItem('apiUrl') || '';
         }
 
-        data.forEach(u => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${u.id}</strong></td>
-                <td>${u.name}</td>
-                <td>${u.email}</td>
-                <td>${u.currentBorrowed} / ${u.maxLimit} 本</td>
-                <td>${u.totalBorrowed} 次</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    // ==================== 後端 API 操作 API Functions ====================
-    
-    // 1. 新增館藏
-    async function handleAddItem() {
-        const id = document.getElementById('newItemId').value.trim();
-        const title = document.getElementById('newItemTitle').value.trim();
-        const itemType = document.getElementById('newItemType').value;
-        const author = document.getElementById('newItemAuthor').value.trim();
-
-        if (!id || !title) return showToast('請填寫館藏編號與名稱', true);
-
-        await sendPostAction({ action: 'addItem', id, title, itemType, author }, () => {
-            document.getElementById('newItemId').value = '';
-            document.getElementById('newItemTitle').value = '';
-            document.getElementById('newItemAuthor').value = '';
+        function saveApiUrl() {
+            const url = document.getElementById('apiUrlInput').value.trim();
+            if (!url) return showToast('請輸入有效的 API 網址', true);
+            localStorage.setItem('apiUrl', url);
+            showToast('API 網址儲存成功！');
             loadItems(true);
-        });
-    }
-
-    // 2. 刪除館藏
-    async function handleDeleteItem(itemId, itemTitle) {
-        if (!confirm(`⚠️ 確定要刪除館藏：【${itemTitle}】(編號: ${itemId}) 嗎？\n此動作將直接從平臺資料庫移除！`)) {
-            return;
-        }
-
-        await sendPostAction({ action: 'deleteItem', id: itemId }, () => {
-            loadItems(true);
-        });
-    }
-
-    // 3. 新增讀者
-    async function handleAddUser() {
-        const user_id = document.getElementById('newUserId').value.trim();
-        const name = document.getElementById('newUserName').value.trim();
-        const email = document.getElementById('newUserEmail').value.trim();
-
-        if (!user_id || !name) return showToast('請填寫讀者編號與姓名', true);
-
-        await sendPostAction({ action: 'addUser', user_id, name, email }, () => {
-            document.getElementById('newUserId').value = '';
-            document.getElementById('newUserName').value = '';
-            document.getElementById('newUserEmail').value = '';
             loadUsers(true);
-        });
-    }
-
-    // 4. 辦理借書
-    async function handleBorrowItem() {
-        const item_id = document.getElementById('actionItemId').value.trim();
-        const user_id = document.getElementById('actionUserId').value.trim();
-
-        if (!item_id || !user_id) return showToast('請輸入館藏編號與讀者編號', true);
-
-        await sendPostAction({ action: 'borrowItem', item_id, user_id }, () => {
-            document.getElementById('actionItemId').value = '';
-            loadItems(true);
-        });
-    }
-
-    // 5. 辦理歸還
-    async function handleReturnItem() {
-        const item_id = document.getElementById('actionItemId').value.trim();
-
-        if (!item_id) return showToast('請輸入要歸還的館藏編號', true);
-
-        await sendPostAction({ action: 'returnItem', item_id }, () => {
-            document.getElementById('actionItemId').value = '';
-            loadItems(true);
-        });
-    }
-
-    // 通用 POST 送出函式
-    async function sendPostAction(payload, onSuccess) {
-        const url = getApiUrl();
-        const token = getToken();
-
-        if (!url) return showToast('請先設定 API 網址', true);
-
-        showToast('處理中...');
-        try {
-            const res = await fetch(url, {
-                method: 'POST',
-                body: JSON.stringify({ ...payload, token })
-            });
-            const data = await res.json();
-            if (!handleApiResponse(data)) return;
-
-            showToast(data.message, data.status !== 'success');
-            if (data.status === 'success' && onSuccess) {
-                onSuccess();
-            }
-        } catch (e) {
-            showToast('操作失敗，請檢查網路連線', true);
         }
-    }
-</script>
+
+        function getToken() {
+            return localStorage.getItem('adminToken') || '';
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.backgroundColor = isError ? '#d9534f' : '#333';
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // ==================== 身份驗證 ====================
+        function checkLoginStatus() {
+            const token = getToken();
+            const adminName = localStorage.getItem('adminName');
+
+            if (token && adminName) {
+                document.getElementById('adminDisplayName').innerText = `👤 管理員：${adminName}`;
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('adminDisplayName').innerText = '當前狀態：訪客';
+                document.getElementById('loginBtn').style.display = 'inline-block';
+                document.getElementById('logoutBtn').style.display = 'none';
+            }
+        }
+
+        async function showLoginPrompt() {
+            const username = prompt("請輸入管理者帳號：");
+            if (!username) return;
+            const password = prompt("請輸入管理者密碼：");
+            if (!password) return;
+
+            const url = getApiUrl();
+            if (!url) return showToast('請先設定 API 網址', true);
+
+            showToast('驗證中...');
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', username, password })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminName', data.adminName);
+                    showToast('登入成功！');
+                    checkLoginStatus();
+                } else {
+                    showToast(data.message, true);
+                }
+            } catch (e) {
+                showToast('登入失敗，請檢查 API 網址或網路連線', true);
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminName');
+            showToast('已安全登出！');
+            checkLoginStatus();
+        }
+
+        function handleApiResponse(data) {
+            if (data.status === 'unauthorized') {
+                handleLogout();
+                showToast(data.message, true);
+                return false;
+            }
+            return true;
+        }
+
+        // ==================== 載入與渲染資料 ====================
+        async function loadItems(force = false) {
+            const url = getApiUrl();
+            if (!url) return;
+
+            try {
+                const res = await fetch(`${url}?type=items${force ? '&t=' + Date.now() : ''}`);
+                const data = await res.json();
+                renderItemsTable(data);
+            } catch (e) {
+                console.error('載入館藏失敗:', e);
+            }
+        }
+
+        function renderItemsTable(data) {
+            const tbody = document.getElementById('itemsTableBody');
+            tbody.innerHTML = '';
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">尚無館藏資料</td></tr>';
+                return;
+            }
+
+            data.forEach(item => {
+                const statusClass = item.status === '可借閱' ? 'status-available' : 'status-borrowed';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${item.id}</strong></td>
+                    <td>${item.itemType}</td>
+                    <td>${item.title}</td>
+                    <td>${item.author}</td>
+                    <td><span class="${statusClass}">${item.status}</span></td>
+                    <td>
+                        <button class="btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="handleDeleteItem('${item.id}', '${item.title}')">刪除</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function loadUsers(force = false) {
+            const url = getApiUrl();
+            if (!url) return;
+
+            try {
+                const res = await fetch(`${url}?type=users${force ? '&t=' + Date.now() : ''}`);
+                const data = await res.json();
+                renderUsersTable(data);
+            } catch (e) {
+                console.error('載入讀者失敗:', e);
+            }
+        }
+
+        function renderUsersTable(data) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">尚無讀者資料</td></tr>';
+                return;
+            }
+
+            data.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${u.id}</strong></td>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td>${u.currentBorrowed} / ${u.maxLimit} 本</td>
+                    <td>${u.totalBorrowed} 次</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==================== 後端操作 API Functions ====================
+        
+        // 1. 新增館藏
+        async function handleAddItem() {
+            const id = document.getElementById('newItemId').value.trim();
+            const title = document.getElementById('newItemTitle').value.trim();
+            const itemType = document.getElementById('newItemType').value;
+            const author = document.getElementById('newItemAuthor').value.trim();
+
+            if (!id || !title) return showToast('請填寫館藏編號與名稱', true);
+
+            await sendPostAction({ action: 'addItem', id, title, itemType, author }, () => {
+                document.getElementById('newItemId').value = '';
+                document.getElementById('newItemTitle').value = '';
+                document.getElementById('newItemAuthor').value = '';
+                loadItems(true);
+            });
+        }
+
+        // 2. 刪除館藏
+        async function handleDeleteItem(itemId, itemTitle) {
+            if (!confirm(`⚠️ 確定要刪除館藏：【${itemTitle}】(編號: ${itemId}) 嗎？\n此動作將直接從平臺資料庫移除！`)) {
+                return;
+            }
+
+            await sendPostAction({ action: 'deleteItem', id: itemId }, () => {
+                loadItems(true);
+            });
+        }
+
+        // 3. 新增讀者
+        async function handleAddUser() {
+            const user_id = document.getElementById('newUserId').value.trim();
+            const name = document.getElementById('newUserName').value.trim();
+            const email = document.getElementById('newUserEmail').value.trim();
+
+            if (!user_id || !name) return showToast('請填寫讀者編號與姓名', true);
+
+            await sendPostAction({ action: 'addUser', user_id, name, email }, () => {
+                document.getElementById('newUserId').value = '';
+                document.getElementById('newUserName').value = '';
+                document.getElementById('newUserEmail').value = '';
+                loadUsers(true);
+            });
+        }
+
+        // 4. 辦理借書
+        async function handleBorrowItem() {
+            const item_id = document.getElementById('actionItemId').value.trim();
+            const user_id = document.getElementById('actionUserId').value.trim();
+
+            if (!item_id || !user_id) return showToast('請輸入館藏編號與讀者編號', true);
+
+            await sendPostAction({ action: 'borrowItem', item_id, user_id }, () => {
+                document.getElementById('actionItemId').value = '';
+                loadItems(true);
+            });
+        }
+
+        // 5. 辦理歸還
+        async function handleReturnItem() {
+            const item_id = document.getElementById('actionItemId').value.trim();
+
+            if (!item_id) return showToast('請輸入要歸還的館藏編號', true);
+
+            await sendPostAction({ action: 'returnItem', item_id }, () => {
+                document.getElementById('actionItemId').value = '';
+                loadItems(true);
+            });
+        }
+
+        // 通用 POST 送出函式
+        async function sendPostAction(payload, onSuccess) {
+            const url = getApiUrl();
+            const token = getToken();
+
+            if (!url) return showToast('請先設定 API 網址', true);
+
+            showToast('處理中...');
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify({ ...payload, token })
+                });
+                const data = await res.json();
+                if (!handleApiResponse(data)) return;
+
+                showToast(data.message, data.status !== 'success');
+                if (data.status === 'success' && onSuccess) {
+                    onSuccess();
+                }
+            } catch (e) {
+                showToast('操作失敗，請檢查網路連線', true);
+            }
+        }
+    </script>
 </body>
 </html>
