@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>國立台臺南護理專科學校學生輔導中心 圖書與館藏借閱管理系統</title>
+    <title>國立台南護理專科學校學生輔導中心 圖書與館藏借閱管理系統</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -30,6 +30,35 @@
             margin: 0 auto;
         }
 
+        /* 登入遮罩 Modal */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .login-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
         header {
             background-color: var(--primary-color);
             color: white;
@@ -39,8 +68,15 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
-            gap: 15px;
+            justify-content: space-between;
             flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .header-logo {
@@ -61,6 +97,15 @@
             font-size: 1.1rem;
             color: #e0e0e0;
             margin-top: 4px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
         }
 
         .api-config {
@@ -144,6 +189,7 @@
 
         .form-group {
             margin-bottom: 15px;
+            text-align: left;
         }
 
         .form-group label {
@@ -211,6 +257,12 @@
             background-color: var(--danger-color);
         }
 
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.85rem;
+            width: auto;
+        }
+
         .table-responsive {
             overflow-x: auto;
         }
@@ -269,7 +321,7 @@
             border-radius: 6px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             display: none;
-            z-index: 1000;
+            z-index: 3000;
         }
 
         .refresh-bar {
@@ -292,12 +344,35 @@
 </head>
 <body>
 
+    <!-- 登入跳窗 (Modal) -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card">
+            <h2>系統管理者登入</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">帳號：</label>
+                    <input type="text" id="loginUsername" required placeholder="請輸入管理者帳號">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">密碼：</label>
+                    <input type="password" id="loginPassword" required placeholder="請輸入密碼">
+                </div>
+                <button type="submit" class="btn" style="margin-top: 10px;">登入系統</button>
+            </form>
+        </div>
+    </div>
+
     <header>
-        <!-- 若上傳 logo.png 至 GitHub，即可直接顯示 -->
-        <img src="logo.png" alt="學校Logo" class="header-logo" onerror="this.style.display='none'">
-        <div class="header-title-group">
-            <h1>國立臺南護理專科學校學生輔導中心</h1>
-            <div class="sub-title">圖書與館藏借閱管理系統</div>
+        <div class="header-left">
+            <img src="logo.png" alt="學校Logo" class="header-logo" onerror="this.style.display='none'">
+            <div class="header-title-group">
+                <h1>國立臺南護理專科學校學生輔導中心</h1>
+                <div class="sub-title">圖書與館藏借閱管理系統</div>
+            </div>
+        </div>
+        <div id="userInfo" class="user-info" style="display: none;">
+            <span>👤 <strong id="adminNameDisplay">管理員</strong></span>
+            <button class="btn btn-danger btn-sm" onclick="handleLogout()">登出</button>
         </div>
         <div class="api-config">
             <label for="apiUrlInput">API 網址：</label>
@@ -324,7 +399,7 @@
                     </div>
                     <div class="form-group">
                         <label for="actionUserId">讀者編號：</label>
-                        <input type="text" id="actionUserId" placeholder="請輸入讀者編號 (歸還時可不填)">
+                        <input type="text" id="actionUserId" placeholder="辦理借出時為必填">
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn btn-success" onclick="handleBorrow()">辦理借出</button>
@@ -502,10 +577,64 @@
             const savedUrl = localStorage.getItem('gas_library_api_url');
             if (savedUrl) {
                 document.getElementById('apiUrlInput').value = savedUrl;
+            }
+            checkAuthStatus();
+        });
+
+        // 檢查是否已登入
+        function checkAuthStatus() {
+            const token = localStorage.getItem('sys_admin_token');
+            const adminName = localStorage.getItem('sys_admin_name');
+
+            if (token && adminName) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'flex';
+                document.getElementById('adminNameDisplay').textContent = adminName;
                 loadItems();
                 loadUsers();
+            } else {
+                document.getElementById('loginOverlay').style.display = 'flex';
+                document.getElementById('userInfo').style.display = 'none';
+            }
+        }
+
+        // 登入處理
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = getApiUrl();
+            if (!url) return showToast('請先設定 API 網址！', true);
+
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            showToast('驗證登入中...');
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', username, password })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    localStorage.setItem('sys_admin_token', data.token);
+                    localStorage.setItem('sys_admin_name', data.adminName);
+                    showToast('登入成功！');
+                    checkAuthStatus();
+                } else {
+                    showToast(data.message, true);
+                }
+            } catch (err) {
+                showToast('登入失敗，請檢查 API 網址與網路連線', true);
             }
         });
+
+        // 登出處理
+        function handleLogout() {
+            localStorage.removeItem('sys_admin_token');
+            localStorage.removeItem('sys_admin_name');
+            showToast('已安全登出');
+            checkAuthStatus();
+        }
 
         function switchTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -527,6 +656,7 @@
         }
 
         function getApiUrl() { return localStorage.getItem('gas_library_api_url'); }
+        function getToken() { return localStorage.getItem('sys_admin_token'); }
 
         function showToast(msg, isError = false) {
             const toast = document.getElementById('toast');
@@ -534,6 +664,15 @@
             toast.style.backgroundColor = isError ? 'var(--danger-color)' : '#333';
             toast.style.display = 'block';
             setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        function handleApiResponse(data) {
+            if (data.status === 'unauthorized') {
+                showToast(data.message, true);
+                handleLogout();
+                return false;
+            }
+            return true;
         }
 
         async function loadItems(forceRefresh = false) {
@@ -690,6 +829,7 @@
         document.getElementById('addItemForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const url = getApiUrl();
+            const token = getToken();
             if (!url) return showToast('請先設定 API 網址', true);
 
             const itemType = document.getElementById('itemType').value;
@@ -699,8 +839,10 @@
 
             showToast('發送中...');
             try {
-                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'addItem', id, title, itemType, author }) });
+                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'addItem', token, id, title, itemType, author }) });
                 const data = await res.json();
+                if (!handleApiResponse(data)) return;
+
                 showToast(data.message, data.status !== 'success');
                 if (data.status === 'success') { 
                     document.getElementById('addItemForm').reset(); 
@@ -712,6 +854,7 @@
         document.getElementById('addUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const url = getApiUrl();
+            const token = getToken();
             if (!url) return showToast('請先設定 API 網址', true);
 
             const user_id = document.getElementById('userId').value.trim();
@@ -720,8 +863,10 @@
             
             showToast('發送中...');
             try {
-                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'addUser', user_id, name, email }) });
+                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'addUser', token, user_id, name, email }) });
                 const data = await res.json();
+                if (!handleApiResponse(data)) return;
+
                 showToast(data.message, data.status !== 'success');
                 if (data.status === 'success') { 
                     document.getElementById('addUserForm').reset(); 
@@ -732,20 +877,25 @@
 
         async function handleBorrow() {
             const url = getApiUrl();
+            const token = getToken();
             if (!url) return showToast('請先設定 API 網址', true);
 
             const item_id = document.getElementById('actionItemId').value.trim();
             const user_id = document.getElementById('actionUserId').value.trim();
             
-            if (!item_id || !user_id) return showToast('請輸入館藏編號與讀者編號', true);
+            if (!item_id) return showToast('❌ 請輸入或掃描館藏編號！', true);
+            if (!user_id) return showToast('❌ 辦理借出必須輸入讀者編號！', true);
 
             showToast('辦理借出中...');
             try {
-                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'borrowItem', item_id, user_id }) });
+                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'borrowItem', token, item_id, user_id }) });
                 const data = await res.json();
+                if (!handleApiResponse(data)) return;
+
                 showToast(data.message, data.status !== 'success');
                 if (data.status === 'success') { 
                     document.getElementById('actionItemId').value = '';
+                    document.getElementById('actionUserId').value = '';
                     loadItems(true); 
                     loadUsers(true);
                 }
@@ -753,72 +903,19 @@
         }
 
         async function handleReturn() {
-            // 辦理借出（強制檢查：館藏編號 + 讀者編號）
-async function handleBorrow() {
-    const url = getApiUrl();
-    if (!url) return showToast('請先設定 API 網址', true);
+            const url = getApiUrl();
+            const token = getToken();
+            if (!url) return showToast('請先設定 API 網址', true);
 
-    const item_id = document.getElementById('actionItemId').value.trim();
-    const user_id = document.getElementById('actionUserId').value.trim();
-    
-    // 💡 強制驗證：兩者均為必填
-    if (!item_id) {
-        return showToast('❌ 請輸入或掃描館藏編號！', true);
-    }
-    if (!user_id) {
-        return showToast('❌ 辦理借出必須輸入讀者編號！', true);
-    }
-
-    showToast('辦理借出中...');
-    try {
-        const res = await fetch(url, { 
-            method: 'POST', 
-            body: JSON.stringify({ action: 'borrowItem', item_id, user_id }) 
-        });
-        const data = await res.json();
-        showToast(data.message, data.status !== 'success');
-        if (data.status === 'success') { 
-            // 成功後清空輸入框
-            document.getElementById('actionItemId').value = '';
-            document.getElementById('actionUserId').value = '';
-            loadItems(true); 
-            loadUsers(true);
-        }
-    } catch (e) { 
-        showToast('借出失敗，請確認網路連線', true); 
-    }
-}
-
-// 辦理歸還（僅檢查：館藏編號）
-async function handleReturn() {
-    const url = getApiUrl();
-    if (!url) return showToast('請先設定 API 網址', true);
-
-    const item_id = document.getElementById('actionItemId').value.trim();
-    if (!item_id) return showToast('❌ 請輸入或掃描館藏編號！', true);
-
-    showToast('辦理歸還中...');
-    try {
-        const res = await fetch(url, { 
-            method: 'POST', 
-            body: JSON.stringify({ action: 'returnItem', item_id }) 
-        });
-        const data = await res.json();
-        showToast(data.message, data.status !== 'success');
-        if (data.status === 'success') { 
-            document.getElementById('actionItemId').value = '';
-            loadItems(true); 
-            loadUsers(true);
-        }
-    } catch (e) { 
-        showToast('歸還失敗，請確認網路連線', true); 
-    }
-}
+            const item_id = document.getElementById('actionItemId').value.trim();
+            if (!item_id) return showToast('❌ 請輸入或掃描館藏編號！', true);
 
             showToast('辦理歸還中...');
             try {
-                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'returnItem', item_id }) });
+                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'returnItem', token, item_id }) });
                 const data = await res.json();
+                if (!handleApiResponse(data)) return;
+
                 showToast(data.message, data.status !== 'success');
                 if (data.status === 'success') { 
                     document.getElementById('actionItemId').value = '';
