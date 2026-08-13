@@ -30,30 +30,32 @@
             line-height: 1.6;
         }
 
+        /* 需求4: 上方藍色方格拉大拉粗 */
         header {
             background-color: var(--primary-color);
             color: white;
-            padding: 1rem 2rem;
+            padding: 2.2rem 3rem; /* 增加內邊距使視圖更大氣 */
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
         header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 2.1rem; /* 字體放大 */
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
         .auth-status {
-            font-size: 0.9rem;
+            font-size: 1.05rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 20px auto;
             padding: 0 15px;
         }
@@ -67,11 +69,11 @@
         }
 
         .tab-btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
             background: none;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: bold;
             color: #495057;
             transition: all 0.3s ease;
@@ -85,7 +87,7 @@
         .tab-content {
             display: none;
             background-color: var(--card-bg);
-            padding: 20px;
+            padding: 25px;
             border-radius: 0 0 8px 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
@@ -94,10 +96,28 @@
             display: block;
         }
 
+        /* 第一頁雙欄佈局 */
+        .page1-layout {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        /* 需求1: 左半邊不超過 1/3 (設定寬度 28%) */
+        .left-panel {
+            width: 28%;
+            min-width: 280px;
+            flex-shrink: 0;
+        }
+
+        .right-panel {
+            flex: 1;
+        }
+
         .card {
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            padding: 15px;
+            padding: 18px;
             margin-bottom: 20px;
             background-color: #fff;
         }
@@ -105,8 +125,9 @@
         .card h3 {
             margin-bottom: 15px;
             color: var(--primary-color);
-            border-bottom: 1px solid #eee;
+            border-bottom: 2px solid #eee;
             padding-bottom: 8px;
+            font-size: 1.15rem;
         }
 
         .form-grid {
@@ -119,23 +140,34 @@
         .form-group {
             display: flex;
             flex-direction: column;
+            margin-bottom: 12px;
         }
 
         .form-group label {
-            margin-bottom: 5px;
-            font-size: 0.9rem;
+            margin-bottom: 6px;
+            font-size: 0.92rem;
             font-weight: bold;
         }
 
         .form-group input, .form-group select {
-            padding: 8px 12px;
+            padding: 9px 12px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             font-size: 0.95rem;
         }
 
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
         .btn {
-            padding: 8px 16px;
+            padding: 9px 18px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -152,7 +184,10 @@
         .btn-secondary { background-color: #6c757d; color: white; }
         .btn-secondary:hover { background-color: #5a6268; }
 
-        .btn-sm { padding: 4px 8px; font-size: 0.85rem; }
+        .btn-success { background-color: var(--success-color); color: white; }
+        .btn-success:hover { background-color: #218838; }
+
+        .btn-sm { padding: 5px 10px; font-size: 0.85rem; }
 
         table {
             width: 100%;
@@ -171,6 +206,10 @@
             color: #495057;
         }
 
+        .clickable-row:hover {
+            background-color: #f1f5f9;
+        }
+
         .badge {
             padding: 4px 8px;
             border-radius: 12px;
@@ -184,17 +223,17 @@
 
         .api-config {
             background-color: #e3f2fd;
-            padding: 10px 15px;
+            padding: 12px 18px;
             border-radius: 6px;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .api-config input {
             flex: 1;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
         }
@@ -214,6 +253,7 @@
 </head>
 <body>
 
+    <!-- 需求4: 放大尺寸的頂部標題區 -->
     <header>
         <h1>國立臺南護理專科學校學生輔導中心 圖書及館藏借閱系統</h1>
         <div class="auth-status">
@@ -231,15 +271,79 @@
             <button class="btn btn-primary btn-sm" onclick="saveApiUrl()">儲存網址</button>
         </div>
 
-        <!-- 頁籤按鈕 -->
+        <!-- 頁籤按鈕 (調整頁籤架構) -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('tab-items', this)">館藏查詢與管理</button>
-            <button class="tab-btn" onclick="switchTab('tab-borrow', this)">借還書櫃臺</button>
-            <button class="tab-btn" onclick="switchTab('tab-users', this)">讀者資料管理</button>
+            <button class="tab-btn active" onclick="switchTab('tab-borrow', this)">第一頁：借還書與館藏查詢</button>
+            <button class="tab-btn" onclick="switchTab('tab-items', this)">第二頁：館藏資料維護(新增/刪除)</button>
+            <button class="tab-btn" onclick="switchTab('tab-users', this)">第三頁：借閱人員管理</button>
         </div>
 
-        <!-- 頁籤一：館藏查詢與管理 -->
-        <div id="tab-items" class="tab-content active">
+        <!-- 需求1: 第一頁 (借還書功能在左側少於1/3，右側為可點選帶入的書籍館藏清單) -->
+        <div id="tab-borrow" class="tab-content active">
+            <div class="page1-layout">
+                
+                <!-- 左側：借還書功能 (寬度佔 28% < 1/3) -->
+                <div class="left-panel">
+                    <div class="card">
+                        <h3>辦理借書 / 歸還</h3>
+                        <div class="form-group">
+                            <label>館藏編號 (點右側清單可自動帶入)</label>
+                            <input type="text" id="actionItemId" placeholder="請輸入、掃描或點擊右側">
+                        </div>
+                        <div class="form-group">
+                            <label>讀者編號 (借書時必填)</label>
+                            <input type="text" id="actionUserId" placeholder="例如：S112001">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="handleBorrowItem()">辦理借出</button>
+                            <button class="btn btn-success" onclick="handleReturnItem()">辦理歸還</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：館藏清單與分類篩選 (直接點選帶入編號) -->
+                <div class="right-panel">
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="border: none; margin: 0; padding: 0;">館藏快速查詢與選擇</h3>
+                            <button class="btn btn-secondary btn-sm" onclick="loadItems(true)">重新整理</button>
+                        </div>
+
+                        <!-- 分類篩選 Bar -->
+                        <div class="filter-bar">
+                            <label><strong>館藏分類篩選：</strong></label>
+                            <select id="categoryFilter" onchange="renderQuickItemsTable()" style="padding: 5px 10px; border-radius: 4px;">
+                                <option value="ALL">全部類別</option>
+                                <option value="書籍">書籍</option>
+                                <option value="牌卡桌游">牌卡桌游</option>
+                                <option value="DVD">DVD</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>編號</th>
+                                    <th>類型</th>
+                                    <th>名稱</th>
+                                    <th>作者/發行</th>
+                                    <th>狀態</th>
+                                    <th>點選帶入</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quickItemsTableBody">
+                                <tr><td colspan="6" style="text-align:center;">載入中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 需求2: 第二頁 (新增、刪除、圖書跟館藏清單) -->
+        <div id="tab-items" class="tab-content">
             <div class="card">
                 <h3>新增館藏資料</h3>
                 <div class="form-grid">
@@ -270,7 +374,7 @@
 
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="border: none; margin: 0; padding: 0;">館藏清單</h3>
+                    <h3 style="border: none; margin: 0; padding: 0;">完整館藏維護清單</h3>
                     <button class="btn btn-secondary btn-sm" onclick="loadItems(true)">重新整理</button>
                 </div>
                 <table>
@@ -281,7 +385,7 @@
                             <th>名稱</th>
                             <th>作者/發行</th>
                             <th>狀態</th>
-                            <th>操作</th>
+                            <th>管理操作</th>
                         </tr>
                     </thead>
                     <tbody id="itemsTableBody">
@@ -291,31 +395,10 @@
             </div>
         </div>
 
-        <!-- 頁籤二：借還書櫃臺 -->
-        <div id="tab-borrow" class="tab-content">
-            <div class="card">
-                <h3>辦理借書 / 歸還</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>館藏編號</label>
-                        <input type="text" id="actionItemId" placeholder="請輸入或掃描館藏編號">
-                    </div>
-                    <div class="form-group">
-                        <label>讀者編號 (辦理借書時必填)</label>
-                        <input type="text" id="actionUserId" placeholder="例如：S112001">
-                    </div>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="handleBorrowItem()">辦理借出</button>
-                    <button class="btn btn-secondary" onclick="handleReturnItem()">辦理歸還</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 頁籤三：讀者資料管理 -->
+        <!-- 需求3: 第三頁 (借閱人員管理) -->
         <div id="tab-users" class="tab-content">
             <div class="card">
-                <h3>新增讀者資料</h3>
+                <h3>新增借閱人員 (讀者)</h3>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>讀者編號/學號</label>
@@ -330,12 +413,12 @@
                         <input type="email" id="newUserEmail" placeholder="例如：user@example.com">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="handleAddUser()">新增讀者</button>
+                <button class="btn btn-primary" onclick="handleAddUser()">新增人員</button>
             </div>
 
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="border: none; margin: 0; padding: 0;">讀者與借閱統計清單</h3>
+                    <h3 style="border: none; margin: 0; padding: 0;">借閱人員資料與統計清單</h3>
                     <button class="btn btn-secondary btn-sm" onclick="loadUsers(true)">重新整理</button>
                 </div>
                 <table>
@@ -360,7 +443,8 @@
     <div id="toast"></div>
 
     <script>
-        // 初始化與 localstorage 讀取
+        let rawItemsData = []; // 暫存館藏資料以利快速過濾
+
         document.addEventListener("DOMContentLoaded", () => {
             const savedUrl = localStorage.getItem('apiUrl');
             if (savedUrl) {
@@ -402,7 +486,7 @@
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
 
-            if (tabId === 'tab-items') loadItems();
+            if (tabId === 'tab-borrow' || tabId === 'tab-items') loadItems();
             if (tabId === 'tab-users') loadUsers();
         }
 
@@ -468,7 +552,7 @@
             return true;
         }
 
-        // 載入與繪製館藏資料
+        // 載入館藏資料
         async function loadItems(force = false) {
             const url = getApiUrl();
             if (!url) return;
@@ -476,22 +560,64 @@
             try {
                 const res = await fetch(`${url}?type=items${force ? '&t=' + Date.now() : ''}`);
                 const data = await res.json();
-                renderItemsTable(data);
+                rawItemsData = data;
+                renderQuickItemsTable(); // 渲染第一頁清單
+                renderItemsTable();      // 渲染第二頁管理清單
             } catch (e) {
                 console.error('無法取得館藏資料', e);
             }
         }
 
-        function renderItemsTable(data) {
+        // 需求1: 第一頁館藏清單渲染與分類篩選
+        function renderQuickItemsTable() {
+            const tbody = document.getElementById('quickItemsTableBody');
+            tbody.innerHTML = '';
+
+            const selectedCategory = document.getElementById('categoryFilter').value;
+            const filteredData = selectedCategory === 'ALL' 
+                ? rawItemsData 
+                : rawItemsData.filter(i => i.itemType === selectedCategory);
+
+            if (!Array.isArray(filteredData) || filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">無符合條件之館藏資料</td></tr>';
+                return;
+            }
+
+            filteredData.forEach(item => {
+                const badgeClass = item.status === '可借閱' ? 'badge-available' : 'badge-borrowed';
+                const tr = document.createElement('tr');
+                tr.className = 'clickable-row';
+                tr.innerHTML = `
+                    <td><strong>${item.id}</strong></td>
+                    <td>${item.itemType}</td>
+                    <td>${item.title}</td>
+                    <td>${item.author}</td>
+                    <td><span class="badge ${badgeClass}">${item.status}</span></td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="selectItemCode('${item.id}')">選取帶入</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 點選代入館藏編號至左側輸入框
+        function selectItemCode(itemId) {
+            document.getElementById('actionItemId').value = itemId;
+            showToast(`已選取編號：${itemId}`);
+        }
+
+        // 第二頁館藏管理清單渲染
+        function renderItemsTable() {
             const tbody = document.getElementById('itemsTableBody');
             tbody.innerHTML = '';
 
-            if (!Array.isArray(data) || data.length === 0) {
+            if (!Array.isArray(rawItemsData) || rawItemsData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">目前無館藏資料</td></tr>';
                 return;
             }
 
-            data.forEach(item => {
+            rawItemsData.forEach(item => {
                 const badgeClass = item.status === '可借閱' ? 'badge-available' : 'badge-borrowed';
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -508,7 +634,7 @@
             });
         }
 
-        // 載入與繪製讀者資料
+        // 第三頁讀者清單渲染
         async function loadUsers(force = false) {
             const url = getApiUrl();
             if (!url) return;
@@ -527,7 +653,7 @@
             tbody.innerHTML = '';
 
             if (!Array.isArray(data) || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">目前無讀者資料</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">目前無人員資料</td></tr>';
                 return;
             }
 
@@ -544,7 +670,7 @@
             });
         }
 
-        // POST 動作操作 (新增/刪除/借歸還)
+        // POST 動作操作
         async function handleAddItem() {
             const id = document.getElementById('newItemId').value.trim();
             const title = document.getElementById('newItemTitle').value.trim();
