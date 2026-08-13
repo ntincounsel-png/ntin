@@ -30,11 +30,11 @@
             line-height: 1.6;
         }
 
-        /* 需求4: 上方藍色方格拉大拉粗 */
+        /* 放大尺寸的頂部標題區 */
         header {
             background-color: var(--primary-color);
             color: white;
-            padding: 2.2rem 3rem; /* 增加內邊距使視圖更大氣 */
+            padding: 2.2rem 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -42,7 +42,7 @@
         }
 
         header h1 {
-            font-size: 2.1rem; /* 字體放大 */
+            font-size: 2.1rem;
             font-weight: 700;
             letter-spacing: 1px;
         }
@@ -103,7 +103,7 @@
             align-items: flex-start;
         }
 
-        /* 需求1: 左半邊不超過 1/3 (設定寬度 28%) */
+        /* 左半邊不超過 1/3 (寬度 28%) */
         .left-panel {
             width: 28%;
             min-width: 280px;
@@ -156,14 +156,23 @@
             font-size: 0.95rem;
         }
 
+        /* 篩選與搜尋列 */
         .filter-bar {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
+            flex-wrap: wrap;
             margin-bottom: 15px;
             background: #f8f9fa;
-            padding: 10px;
+            padding: 12px 15px;
             border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn {
@@ -253,7 +262,6 @@
 </head>
 <body>
 
-    <!-- 需求4: 放大尺寸的頂部標題區 -->
     <header>
         <h1>國立臺南護理專科學校學生輔導中心 圖書及館藏借閱系統</h1>
         <div class="auth-status">
@@ -271,18 +279,18 @@
             <button class="btn btn-primary btn-sm" onclick="saveApiUrl()">儲存網址</button>
         </div>
 
-        <!-- 頁籤按鈕 (調整頁籤架構) -->
+        <!-- 頁籤按鈕 -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('tab-borrow', this)">第一頁：借還書與館藏查詢</button>
             <button class="tab-btn" onclick="switchTab('tab-items', this)">第二頁：館藏資料維護(新增/刪除)</button>
             <button class="tab-btn" onclick="switchTab('tab-users', this)">第三頁：借閱人員管理</button>
         </div>
 
-        <!-- 需求1: 第一頁 (借還書功能在左側少於1/3，右側為可點選帶入的書籍館藏清單) -->
+        <!-- 第一頁：借還書與館藏查詢 -->
         <div id="tab-borrow" class="tab-content active">
             <div class="page1-layout">
                 
-                <!-- 左側：借還書功能 (寬度佔 28% < 1/3) -->
+                <!-- 左側：借還書功能面板 -->
                 <div class="left-panel">
                     <div class="card">
                         <h3>辦理借書 / 歸還</h3>
@@ -301,7 +309,7 @@
                     </div>
                 </div>
 
-                <!-- 右側：館藏清單與分類篩選 (直接點選帶入編號) -->
+                <!-- 右側：館藏查詢（含書名搜尋與分類篩選） -->
                 <div class="right-panel">
                     <div class="card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -309,16 +317,25 @@
                             <button class="btn btn-secondary btn-sm" onclick="loadItems(true)">重新整理</button>
                         </div>
 
-                        <!-- 分類篩選 Bar -->
+                        <!-- 分類篩選與書名關鍵字搜尋 Bar -->
                         <div class="filter-bar">
-                            <label><strong>館藏分類篩選：</strong></label>
-                            <select id="categoryFilter" onchange="renderQuickItemsTable()" style="padding: 5px 10px; border-radius: 4px;">
-                                <option value="ALL">全部類別</option>
-                                <option value="書籍">書籍</option>
-                                <option value="牌卡桌游">牌卡桌游</option>
-                                <option value="DVD">DVD</option>
-                                <option value="其他">其他</option>
-                            </select>
+                            <div class="filter-item">
+                                <label for="categoryFilter"><strong>分類：</strong></label>
+                                <select id="categoryFilter" onchange="renderQuickItemsTable()" style="padding: 6px 10px; border-radius: 4px; border: 1px solid #ccc;">
+                                    <option value="ALL">全部類別</option>
+                                    <option value="書籍">書籍</option>
+                                    <option value="牌卡桌游">牌卡桌游</option>
+                                    <option value="DVD">DVD</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-item" style="flex: 1; min-width: 200px;">
+                                <label for="searchKeyword"><strong>搜尋書名/作者：</strong></label>
+                                <input type="text" id="searchKeyword" oninput="renderQuickItemsTable()" placeholder="請輸入書名或關鍵字..." style="flex: 1; padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px;">
+                            </div>
+
+                            <button class="btn btn-secondary btn-sm" onclick="clearFilters()">清除條件</button>
                         </div>
 
                         <table>
@@ -326,7 +343,7 @@
                                 <tr>
                                     <th>編號</th>
                                     <th>類型</th>
-                                    <th>名稱</th>
+                                    <th>名稱 / 書名</th>
                                     <th>作者/發行</th>
                                     <th>狀態</th>
                                     <th>點選帶入</th>
@@ -342,7 +359,7 @@
             </div>
         </div>
 
-        <!-- 需求2: 第二頁 (新增、刪除、圖書跟館藏清單) -->
+        <!-- 第二頁：新增、刪除、館藏清單 -->
         <div id="tab-items" class="tab-content">
             <div class="card">
                 <h3>新增館藏資料</h3>
@@ -395,7 +412,7 @@
             </div>
         </div>
 
-        <!-- 需求3: 第三頁 (借閱人員管理) -->
+        <!-- 第三頁：借閱人員管理 -->
         <div id="tab-users" class="tab-content">
             <div class="card">
                 <h3>新增借閱人員 (讀者)</h3>
@@ -443,7 +460,7 @@
     <div id="toast"></div>
 
     <script>
-        let rawItemsData = []; // 暫存館藏資料以利快速過濾
+        let rawItemsData = []; // 暫存館藏資料以利快速過濾與搜尋
 
         document.addEventListener("DOMContentLoaded", () => {
             const savedUrl = localStorage.getItem('apiUrl');
@@ -568,15 +585,23 @@
             }
         }
 
-        // 需求1: 第一頁館藏清單渲染與分類篩選
+        // 第一頁館藏清單渲染（支援分類與關鍵字搜尋）
         function renderQuickItemsTable() {
             const tbody = document.getElementById('quickItemsTableBody');
             tbody.innerHTML = '';
 
             const selectedCategory = document.getElementById('categoryFilter').value;
-            const filteredData = selectedCategory === 'ALL' 
-                ? rawItemsData 
-                : rawItemsData.filter(i => i.itemType === selectedCategory);
+            const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+
+            // 雙重過濾：分類 + 關鍵字 (匹配書名、編號、作者)
+            const filteredData = rawItemsData.filter(item => {
+                const matchCategory = (selectedCategory === 'ALL' || item.itemType === selectedCategory);
+                const matchKeyword = !keyword || 
+                    (item.title && item.title.toLowerCase().includes(keyword)) ||
+                    (item.id && item.id.toLowerCase().includes(keyword)) ||
+                    (item.author && item.author.toLowerCase().includes(keyword));
+                return matchCategory && matchKeyword;
+            });
 
             if (!Array.isArray(filteredData) || filteredData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">無符合條件之館藏資料</td></tr>';
@@ -599,6 +624,13 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        // 清除搜尋與過濾條件
+        function clearFilters() {
+            document.getElementById('categoryFilter').value = 'ALL';
+            document.getElementById('searchKeyword').value = '';
+            renderQuickItemsTable();
         }
 
         // 點選代入館藏編號至左側輸入框
@@ -670,7 +702,7 @@
             });
         }
 
-        // POST 動作操作
+        // POST 動作操作 (新增/刪除/借歸還)
         async function handleAddItem() {
             const id = document.getElementById('newItemId').value.trim();
             const title = document.getElementById('newItemTitle').value.trim();
